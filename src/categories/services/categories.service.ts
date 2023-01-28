@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { CategoryGroup } from '../entities/category-group.entity';
 import { Category } from '../entities/category.entity';
+import { GetCategoriesEvent } from '../events/get-categories.event';
 
 @Injectable()
 export class CategoriesService {
@@ -12,7 +13,8 @@ export class CategoriesService {
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
   ) {}
-  async getAll() {
+
+  async getCategoriesWithGroups() {
     const groups = await this.categoryGroupRepository.find({
       relations: {
         categories: true,
@@ -31,6 +33,13 @@ export class CategoriesService {
 
     return groups;
   }
+
+  getCategories({ id }: GetCategoriesEvent) {
+    return this.categoryRepository.find({
+      where: { id: In(Array.isArray(id) ? [...id] : [id]) },
+    });
+  }
+
   async seedDummyCategories() {
     const sport = this.categoryGroupRepository.create({ name: 'Sport' });
     await this.categoryGroupRepository.save(sport);
