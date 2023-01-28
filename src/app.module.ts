@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { SnakeNamingStrategy } from './database/strategies/snake-naming.strategy';
+import { CategoriesModule } from './categories/categories.module';
 import appConfig from './shared/config/app.config';
 
 @Module({
@@ -26,6 +27,7 @@ import appConfig from './shared/config/app.config';
       namingStrategy: new SnakeNamingStrategy(),
     }),
     EventEmitterModule.forRoot(),
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
